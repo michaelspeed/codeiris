@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `Session` MODIFY `type` ENUM('AUTHENTICATED', 'ANONYMOUS', 'MAGIC') NOT NULL;

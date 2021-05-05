@@ -1,0 +1,285 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Auth {
+  """JWT access token"""
+  accessToken: String!
+
+  """JWT refresh token"""
+  refreshToken: String!
+  user: User!
+}
+
+type Comment {
+  body: String!
+  children: [Comment!]
+
+  """Identifies the date and time when the object was created."""
+  createdAt: Date!
+  id: ID!
+  parent: Comment
+  post: Post
+  postId: String!
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: Date!
+  user: User
+  userId: String!
+}
+
+type CommentConnection {
+  edges: [CommentEdge!]
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+input CommentCreateInput {
+  body: String!
+  parentId: String
+  postId: String
+}
+
+type CommentEdge {
+  cursor: String!
+  node: Comment!
+}
+
+input CommentOrder {
+  direction: OrderDirection!
+  field: CommentOrderField!
+}
+
+enum CommentOrderField {
+  createdAt
+  updatedAt
+  votes
+}
+
+"""Date custom scalar type"""
+scalar Date
+
+type File {
+  """Identifies the date and time when the object was created."""
+  createdAt: Date!
+  height: Int!
+  id: ID!
+  name: String!
+  post: Post
+  preview: String!
+  size: Int!
+  source: String!
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: Date!
+  user: User
+  width: Int!
+}
+
+type MagicLinkDto {
+  listener: String!
+  status: Boolean!
+}
+
+type Mutation {
+  CreateComment(input: CommentCreateInput!): Comment!
+  addPost(post: PostCreateInput!): Post!
+  createAsset(file: Upload!): File!
+  sendMagicLink(email: String!): MagicLinkDto!
+  updateUserProfileInfo(data: UpdateUserInput!): User!
+  updateVote(input: UpvoteInput!): Vote!
+}
+
+enum OrderDirection {
+  asc
+  desc
+}
+
+type PageInfo {
+  endCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+}
+
+type Post {
+  body: String
+  comments: [Comment!]
+
+  """Identifies the date and time when the object was created."""
+  createdAt: Date!
+  deleted: Boolean!
+  id: ID!
+  slug: String!
+  status: PostStatus!
+  tag: [Tag!]
+  title: String!
+  totalComments: Int!
+  totalVotes: Int!
+  type: PostType!
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: Date!
+  upvoteState: String!
+  url: String!
+  user: User!
+  userId: String!
+  votes: [Vote!]
+}
+
+type PostConnection {
+  edges: [PostEdge!]
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+input PostCreateInput {
+  body: String
+  image: String
+  title: String!
+  type: PostType = link
+  url: String
+}
+
+type PostEdge {
+  cursor: String!
+  node: Post!
+}
+
+input PostOrder {
+  direction: OrderDirection!
+  field: PostOrderFeild!
+}
+
+enum PostOrderFeild {
+  updatedAt
+  votes
+}
+
+enum PostStatus {
+  blocked
+  draft
+  hidden
+  published
+}
+
+enum PostType {
+  ask
+  job
+  link
+}
+
+type Query {
+  getAuth: Auth!
+  getComments(after: String, before: String, first: Int, last: Int, orderBy: CommentOrder, postId: String, skip: Int): CommentConnection!
+  getCommentsChildren(after: String, before: String, commentId: String, first: Int, last: Int, orderBy: CommentOrder, skip: Int): CommentConnection!
+  getMeComments(after: String, before: String, first: Int, last: Int, orderBy: CommentOrder, skip: Int): CommentConnection!
+  getMePosts(after: String, before: String, first: Int, last: Int, orderBy: PostOrder, skip: Int): PostConnection!
+  getPosts(after: String, before: String, first: Int, last: Int, orderBy: PostOrder, skip: Int): PostConnection!
+  getTags(after: String, before: String, contain: String, first: Int, last: Int, skip: Int): TagConnection!
+  getUsers(after: String, before: String, first: Int, last: Int, orderBy: UserOrder, skip: Int): UserConnection!
+  me: User
+}
+
+type Tag {
+  """Identifies the date and time when the object was created."""
+  createdAt: Date!
+  id: ID!
+  name: String!
+  post: [Post!]
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: Date!
+}
+
+type TagConnection {
+  edges: [TagEdge!]
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type TagEdge {
+  cursor: String!
+  node: Tag!
+}
+
+input UpdateUserInput {
+  firstName: String
+  lastName: String
+  middleName: String
+}
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
+
+input UpvoteInput {
+  postId: String!
+  type: String!
+}
+
+type User {
+  """Identifies the date and time when the object was created."""
+  createdAt: Date!
+  email: String!
+  firstName: String!
+  id: ID!
+  lastName: String
+  middleName: String
+  role: UserRole!
+  status: UserStatus!
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: Date!
+}
+
+type UserConnection {
+  edges: [UserEdge!]
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type UserEdge {
+  cursor: String!
+  node: User!
+}
+
+input UserOrder {
+  direction: OrderDirection!
+  field: UserOrderField!
+}
+
+enum UserOrderField {
+  email
+  firstName
+  lastName
+  middleName
+}
+
+enum UserRole {
+  admin
+  moderator
+  user
+}
+
+enum UserStatus {
+  active
+  blocked
+  inactive
+}
+
+type Vote {
+  """Identifies the date and time when the object was created."""
+  createdAt: Date!
+  id: ID!
+  post: Post!
+  type: VoteType!
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: Date!
+  user: User!
+}
+
+enum VoteType {
+  downvotes
+  upvotes
+}

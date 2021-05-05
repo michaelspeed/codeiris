@@ -8,6 +8,7 @@ datasource db {
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["orderByRelation","selectRelationCount"]
 }
 
 model User {
@@ -18,16 +19,31 @@ model User {
   firstName             String
   middleName            String?
   lastName              String?
-  status                UserStatus      @default(active)
-  googleToken           String?
-  githubToken           String?
+  status                UserStatus      @default(value: active)
   image                 File?
   comments              Comment[]       @relation(name: "UserOnComment")
   posts                 Post[]          @relation(name: "UserOnPost")
   votes                 Vote[]          @relation(name: "UserOnVotes")
-  role                  UserRole        @default(user)
+  role                  UserRole        @default(value: user)
   moderatorFlag         Flag[]          @relation(name: "ModeratorOnFlag")
   flag                  Flag[]          @relation(name: "UserOnFlag")
+  session               Session[]       @relation(name: "UserOnSessions")
+}
+
+model Session {
+  id                    String          @id     @default(uuid())
+  createdAt             DateTime        @default(now())
+  updatedAt             DateTime        @updatedAt
+  type                  SessionType
+  token                 String?         @unique
+  authToken             String?
+  refreshToken          String?
+  expires               DateTime?
+  invalidate            Boolean         @default(false)
+  user                  User?           @relation(name: "UserOnSessions", fields: [userId], references: [id])
+  userId                String?
+  googleToken           String?
+  githubToken           String?
 }
 
 model Post {
@@ -41,12 +57,12 @@ model Post {
   user                  User?           @relation(name: "UserOnPost", fields: [userId], references: [id])
   userId                String?
   deleted               Boolean         @default(false)
-  status                PostStatus      @default(draft)
+  status                PostStatus      @default(value: draft)
   comments              Comment[]       @relation(name: "PostOnComment")
   image                 File?
   tags                  Tag[]           @relation(name: "PostOnTags")
   votes                 Vote[]          @relation(name: "PostOnVotes")
-  type                  PostType        @default(link)
+  type                  PostType        @default(value: link)
   flag                  Flag[]          @relation(name: "PostOnFlag")
 }
 
@@ -102,6 +118,8 @@ model File {
   name                  String?
   preview               String?
   source                String?
+  width                 Int?
+  height                Int?
   size                  Int?
   user                  User?           @relation(fields: [userId], references: [id])
   userId                String?
@@ -138,4 +156,10 @@ enum PostStatus {
 enum VoteType {
     upvotes
     downvotes
+}
+
+enum SessionType {
+    AUTHENTICATED
+    ANONYMOUS
+    MAGIC
 }

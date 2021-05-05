@@ -1,0 +1,100 @@
+query getPosts($after: String!, $first: Int!) {
+  getPosts(after: $after, first: $first) {
+    edges {
+      node {
+        id
+        body
+        title
+        updatedAt
+        user {
+          firstName
+          lastName
+        }
+        upvoteState
+        totalVotes
+        totalComments
+      }
+    }
+  }
+}
+
+query getMe {
+  me {
+    id
+    firstName
+    lastName
+    middleName
+    role
+    email
+    status
+  }
+}
+
+query getMeCommentsCount {
+  getMeComments {
+    totalCount
+  }
+}
+
+query getMePostsCount {
+  getMePosts {
+    totalCount
+  }
+}
+
+query getComments($post: String, $first: Int!) {
+  getComments(
+    postId: $post
+    first: $first
+    orderBy: { direction: asc, field: createdAt }
+  ) {
+    pageInfo {
+      endCursor
+      hasNextPage
+    }
+    totalCount
+    edges {
+      node {
+        id
+        body
+        createdAt
+        updatedAt
+        user {
+          id
+          firstName
+        }
+        post {
+          id
+        }
+      }
+    }
+  }
+}
+
+query getCommentsChildren($comment: String, $first: Int!){
+    getCommentsChildren(
+        commentId:$comment,
+        first:$first,
+        orderBy: {
+            direction:desc,
+            field:createdAt
+        }
+    ) {
+        pageInfo {
+            endCursor
+            hasNextPage
+        }
+        totalCount
+        edges {
+            node {
+                id
+                body
+                createdAt
+                user {
+                    id
+                    firstName
+                }
+            }
+        }
+    }
+}
